@@ -182,6 +182,18 @@
                 interrupts = <18 IRQ_TYPE_EDGE_BOTH>;
                 status = "okay";
         };
+
+	dtsleds {
+		compatible = "gpio-leds";
+		red {
+			label = "red";
+			gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "heartbeat";
+			default-status = "on";
+			pinctrl-names = "default";
+                	pinctrl-0 = <&pinctrl_gpioled>;
+		};
+	};
 };
 
 &cpu0 {
