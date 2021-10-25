@@ -295,6 +295,11 @@
 	pinctrl-0 = <&pinctrl_i2c1>;
 	status = "okay";
 
+	ap3216c@1e {
+		compatible = "alientek,ap3216c";
+		reg = <0x1e>;
+	};
+/*
 	mag3110@0e {
 		compatible = "fsl,mag3110";
 		reg = <0x0e>;
@@ -308,6 +313,7 @@
 		interrupt-parent = <&gpio5>;
 		interrupts = <0 8>;
 	};
+*/
 };
 
 &i2c2 {
