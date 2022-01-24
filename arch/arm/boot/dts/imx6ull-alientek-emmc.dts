@@ -355,6 +355,15 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_hog_1>;
 	imx6ul-evk {
+		pinctrl_ecspi3: icm20608 {
+			fsl,pins = <
+				MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI	0x10B1
+				MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO	0x10B1
+				MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK	0x10B1
+				MX6UL_PAD_UART2_TX_DATA__GPIO1_IO20	0x10B0
+			>;
+		};
+
                 pinctrl_gpioled: gpioled {
                         fsl,pins = <
                                 MX6UL_PAD_GPIO1_IO03__GPIO1_IO03        0x10B0  /* led0 */
@@ -379,6 +388,13 @@
 				MX6UL_PAD_UART1_RTS_B__GPIO1_IO19	0x17059 /* SD1 CD */
 				MX6UL_PAD_GPIO1_IO05__USDHC1_VSELECT	0x17059 /* SD1 VSELECT */
 				MX6UL_PAD_GPIO1_IO09__GPIO1_IO09        0x17059 /* SD1 RESET */
+			>;
+		};
+
+		pinctrl_uart3: uart3grp {
+			fsl,pins = <
+				MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX 0x1b0b1
+				MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX 0x1b0b1
 			>;
 		};
 
@@ -431,16 +447,18 @@
 
 		pinctrl_flexcan1: flexcan1grp{
 			fsl,pins = <
-				MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX	0x1b020
-				MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX	0x1b020
+				/* MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX	0x1b020 */
+				/* MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX	0x1b020 */
 			>;
 		};
 
 		pinctrl_flexcan2: flexcan2grp{
+/*
 			fsl,pins = <
 				MX6UL_PAD_UART2_RTS_B__FLEXCAN2_RX	0x1b020
 				MX6UL_PAD_UART2_CTS_B__FLEXCAN2_TX	0x1b020
 			>;
+*/
 		};
 
 		pinctrl_i2c1: i2c1grp {
@@ -539,21 +557,25 @@
 		};
 
 		pinctrl_uart2: uart2grp {
+/* 
 			fsl,pins = <
 				MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
 				MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
 				MX6UL_PAD_UART3_RX_DATA__UART2_DCE_RTS	0x1b0b1
 				MX6UL_PAD_UART3_TX_DATA__UART2_DCE_CTS	0x1b0b1
 			>;
+*/
 		};
 
 		pinctrl_uart2dte: uart2dtegrp {
+/* 
 			fsl,pins = <
 				MX6UL_PAD_UART2_TX_DATA__UART2_DTE_RX	0x1b0b1
 				MX6UL_PAD_UART2_RX_DATA__UART2_DTE_TX	0x1b0b1
 				MX6UL_PAD_UART3_RX_DATA__UART2_DTE_CTS	0x1b0b1
 				MX6UL_PAD_UART3_TX_DATA__UART2_DTE_RTS	0x1b0b1
 			>;
+*/
 		};
 
 		pinctrl_usdhc1: usdhc1grp {
@@ -792,6 +814,16 @@
 	status = "okay";
 };
 
+&uart3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart3>;
+	fsl,uart-has-rtscts;
+	/* for DTE mode, add below change */
+	/* fsl,dte-mode; */
+	/* pinctrl-0 = <&pinctrl_uart2dte>; */
+	status = "okay";
+};
+
 &usbotg1 {
 	dr_mode = "otg";
 	srp-disable;
@@ -840,4 +872,21 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_wdog>;
 	fsl,wdog_b;
+};
+
+&ecspi3 {
+	fsl,spi-num-chipselects = <1>;
+	/* 亦可为cs-gpios, cs-gpios将由nxp驱动自动完成io配置，nxp驱动使用的是软件片选 */
+	cs-gpio = <&gpio1 20 GPIO_ACTIVE_LOW>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi3>;
+	status = "okay";
+
+	spidev: icm20608@0 {		/* @0 0表示硬件片选 */
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "alientek, icm20608";
+		spi-max-frequency = <8000000>;
+		reg = <0>;
+	};	
 };
